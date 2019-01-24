@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>XSDDeserialization</groupId>
+    <artifactId>com.jaxb</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.milyn</groupId>
+            <artifactId>milyn-smooks-javabean</artifactId>
+            <version>1.5.1</version>
+            <exclusions>
+                <!---excluding older version of xerces that comes along with milyn jar by default -->
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- Adding the latest version of Xerces jar here -->
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.11.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <!-- JaCoCo plugin -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Plugin required to build java classes from XSD using XJC -->
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>xjc</id>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <addGeneratedAnnotation>false</addGeneratedAnnotation>
+                    <noGeneratedHeaderComments>true</noGeneratedHeaderComments>
+                    <enableIntrospection>true</enableIntrospection>
+                    <xsdPathWithinArtifact>META-INF/jaxb/xsd</xsdPathWithinArtifact>
+
+                    <!-- Normally want this true but cannot specify location so set to false for now -->
+                    <generateEpisode>false</generateEpisode>
+
+                    <outputDirectory>${project.build.sourceDirectory}</outputDirectory>
+                    <clearOutputDir>false</clearOutputDir>
+
+                    <sources>
+                        <source>src/main/schemas</source>
+                    </sources>
+
+                    <!-- The package of your generated sources -->
+                    <packageName>com.homeaway.invoice.br.domain</packageName>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>
